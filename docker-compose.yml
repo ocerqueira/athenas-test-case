@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  db:
+    container_name: "atehanas-db"
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  web:
+    container_name: "athenas-backend"
+    build: ./backend
+    command: >
+      sh -c "./scripts/wait-for-it.sh db:5432 -- 
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./backend:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    env_file:
+      - .env
+
+  frontend:
+    container_name: "athenas-frontend"
+    build: ./frontend
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html
+    depends_on:
+      - web
+
+volumes:
+  postgres_data:
