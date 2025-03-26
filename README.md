@@ -11,7 +11,7 @@
 1. **Clone o Repositório**
 
    ```bash
-   git clone <URL_DO_REPOSITORIO>
+   git clone https://github.com/ocerqueira/athenas-test-case.git
    cd <nome_do_repositorio>
    ```
 
